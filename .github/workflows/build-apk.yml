@@ -25,26 +25,22 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Instalar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
       - name: Revisar archivos
         run: |
+          echo "Carpeta actual:"
           pwd
+          echo "Archivos del proyecto:"
           ls -la
-          find . -maxdepth 4 -type f \( -name "settings.gradle" -o -name "settings.gradle.kts" -o -name "gradlew" \)
+          echo "Configuración de Gradle:"
+          find . -maxdepth 3 -type f \( -name "settings.gradle" -o -name "settings.gradle.kts" -o -name "build.gradle" -o -name "build.gradle.kts" \)
 
       - name: Compilar APK
-        shell: bash
-        run: |
-          if [ -f "./gradlew" ]; then
-            chmod +x ./gradlew
-            ./gradlew assembleDebug
-          elif [ -f "./HyperOS-Redmi-A5/gradlew" ]; then
-            cd HyperOS-Redmi-A5
-            chmod +x ./gradlew
-            ./gradlew assembleDebug
-          else
-            echo "ERROR: No se encuentra gradlew."
-            exit 1
-          fi
+        run: gradle assembleDebug
 
       - name: Subir APK
         uses: actions/upload-artifact@v4
@@ -53,4 +49,5 @@ jobs:
           name: HYPEROS-A5-APK
           path: "**/build/outputs/apk/debug/*.apk"
           if-no-files-found: error
+
 
