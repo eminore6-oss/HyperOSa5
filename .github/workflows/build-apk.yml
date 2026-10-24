@@ -26,7 +26,7 @@ jobs:
         run: |
           pwd
           ls -la
-          find . -maxdepth 3 -type f \( -name "settings.gradle" -o -name "settings.gradle.kts" -o -name "gradlew" \)
+          find . -maxdepth 4 -type f \( -name "settings.gradle" -o -name "settings.gradle.kts" -o -name "gradlew" \)
 
       - name: Compilar APK
         shell: bash
@@ -50,4 +50,3 @@ jobs:
           name: HYPEROS-A5-APK
           path: "**/build/outputs/apk/debug/*.apk"
           if-no-files-found: error
-
