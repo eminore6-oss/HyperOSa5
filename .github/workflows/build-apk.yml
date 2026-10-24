@@ -1,48 +1,51 @@
-```yaml
 name: Build HYPEROS A5 APK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - master
 
 permissions:
   contents: read
 
 jobs:
   build:
+    name: Compilar HYPEROS A5
     runs-on: ubuntu-latest
 
     steps:
       - name: Descargar proyecto
         uses: actions/checkout@v4
 
-      - name: Configurar Java
+      - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
+      - name: Mostrar archivos del proyecto
+        run: |
+          pwd
+          ls -la
+          find . -maxdepth 3 -type f \( -name "settings.gradle" -o -name "settings.gradle.kts" -o -name "gradlew" \)
+
       - name: Compilar APK
+        shell: bash
         run: |
           if [ -f "./gradlew" ]; then
             chmod +x ./gradlew
             ./gradlew assembleDebug
-          elif [ -f "./app/gradlew" ]; then
-            cd app
+          elif [ -f "./HyperOS-Redmi-A5/gradlew" ]; then
+            cd HyperOS-Redmi-A5
             chmod +x ./gradlew
             ./gradlew assembleDebug
           else
-            echo "No se encuentra gradlew en la raíz ni en app."
+            echo "ERROR: No se encuentra gradlew."
             exit 1
           fi
 
       - name: Subir APK
         uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: HYPEROS-A5-APK
           path: "**/build/outputs/apk/debug/*.apk"
           if-no-files-found: error
-```
